@@ -13,7 +13,7 @@ import view.*;
 import java.io.IOException;
 
 public class Controller {
-    private Board field;
+    private Board board;
     private View view;
     @FXML
     TextField columns;
@@ -25,8 +25,8 @@ public class Controller {
     Label wrong;
 
 
-    public Controller(Board field, View view) {
-        this.field = field;
+    public Controller(Board board, View view) {
+        this.board = board;
         this.view = view;
     }
 
@@ -74,12 +74,12 @@ public class Controller {
     }
 
     public void mouseClickLeft(Tile tile) {
-        field.openTile(tile);
+        board.openTile(tile);
         view.update();
     }
 
     public void mouseClickRight(Tile tile) {
-        field.flagTile(tile);
+        board.flagTile(tile);
         view.update();
     }
 
