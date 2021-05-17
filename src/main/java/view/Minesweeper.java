@@ -9,16 +9,17 @@ import controller.Controller;
 
 public class Minesweeper extends Application {
     View view = new View();
-    public static Stage primaryStage;
+    public static Stage mainStage;
     @Override
     public void start(Stage primaryStage) throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/menu.fxml"));
         loader.setController(new Controller(view));
         Parent root = loader.load();
-        primaryStage.setTitle("Minesweeper");
-        primaryStage.setScene(new Scene(root));
-        primaryStage.setResizable(false);
-        (Minesweeper.primaryStage = primaryStage).show();
+        mainStage = primaryStage;
+        mainStage.setTitle("view.Minesweeper");
+        mainStage.setScene(new Scene(root));
+        mainStage.setResizable(false);
+        mainStage.show();
     }
 
     public static void main(String[] args) {

@@ -1,18 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<?import javafx.scene.control.Label?>
-
-<?import javafx.scene.control.RadioButton?>
 <AnchorPane prefHeight="300.0" prefWidth="300.0" style="-fx-background-color: FFFF99;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
     <TextField fx:id="rows" layoutX="180.0" layoutY="87.0" prefHeight="25.0" prefWidth="60.0" />
     <TextField fx:id="columns" layoutX="180.0" layoutY="120" prefHeight="15.0" prefWidth="60.0" />
     <TextField fx:id="bombs" layoutX="180.0" layoutY="150" prefHeight="15.0" prefWidth="60.0" />
-    <Button layoutX="114.0" layoutY="217.0" onAction="#playNewGame" mnemonicParsing="false" prefHeight="34.0" prefWidth="73.0"
-            text="PLAY" textFill="MAROON">
+    <Button layoutX="114.0" layoutY="217.0" mnemonicParsing="false" onAction="#playNewGame" prefHeight="34.0" prefWidth="73.0" text="PLAY" textFill="MAROON">
         <font>
             <Font size="18.0" />
         </font>
@@ -42,5 +41,6 @@
         <font>
             <Font size="10.0" />
         </font></Label>
+   <Text layoutX="80.0" layoutY="203.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Maximum field size: 25 x 40" wrappingWidth="150.0" />
 
 </AnchorPane>

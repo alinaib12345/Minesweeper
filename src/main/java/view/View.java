@@ -20,14 +20,14 @@ import model.Tile;
 import java.io.IOException;
 
 public class View {
-    private Board field;
+    private Board board;
     private Controller controller;
     private AnchorPane root;
     private Label flagsLeft;
     private StackPane designations;
     private Group grid;
 
-    private final double r = 17;
+    private final double r = 16;
     private final double h = r * Math.sqrt(0.75);
     private final double tileHeight = 2 * r;
     private final double tileWidth = 2 * h;
@@ -39,8 +39,10 @@ public class View {
 
     private int rows, tiles, bombs;
 
+    public AnchorPane getRoot() {return root;}
 
-    public void setConfigure(int rows, int tiles, int bombs) {
+
+    public void setConfiguration(int rows, int tiles, int bombs) {
         this.rows = rows;
         this.tiles = tiles;
         this.bombs = bombs;
@@ -55,17 +57,17 @@ public class View {
     public Parent createGameBoard() {
         root = new AnchorPane();
 
-        field = new Board(rows, tiles, bombs);
-        controller = new Controller(field, this);
+        board = new Board(rows, tiles, bombs);
+        controller = new Controller(board, this);
 
-        double windowHeight = 2.0 * yOffset + field.getRows() / 2.0 * (tileHeight + r);
-        double windowWidth = 2.5 * xOffset + field.getColumns() * tileWidth;
+        double windowHeight = 2.0 * yOffset + board.getRows() / 2.0 * (tileHeight + r);
+        double windowWidth = 2.5 * xOffset + board.getColumns() * tileWidth;
         root.setPrefHeight(windowHeight);
         root.setPrefWidth(windowWidth);
 
 
         designations = new StackPane();
-        Rectangle rectangle = new Rectangle(windowWidth / 2, 50, 100, 25);
+        Rectangle rectangle = new Rectangle((windowWidth / 2) - 16, 30, 100, 25);
         rectangle.setStroke(Color.BLACK);
         rectangle.setFill(Color.LIGHTYELLOW);
         rectangle.setStrokeWidth(0.5);
@@ -77,10 +79,10 @@ public class View {
         designations.setTranslateX(root.getPrefWidth() / 2 - h);
         root.getChildren().add(designations);
 
-        flagsLeft = new Label("Flags: " + field.getFlagsLeft());
-        flagsLeft.setFont(Font.font(24));
-        AnchorPane.setTopAnchor(flagsLeft, 15d);
-        AnchorPane.setLeftAnchor(flagsLeft, 30d);
+        flagsLeft = new Label("Flags: " + board.getFlagsLeft());
+        flagsLeft.setFont(Font.font(20));
+        AnchorPane.setTopAnchor(flagsLeft, 10d);
+        AnchorPane.setLeftAnchor(flagsLeft, 20d);
         root.getChildren().add(flagsLeft);
 
         Button exit = new Button("Exit");
@@ -111,8 +113,8 @@ public class View {
         root.getChildren().add(returnToMenu);
 
         grid = new Group();
-        for (Tile[] rows : field.getGrid()) {
-            for (Tile tile : rows) {
+        for (Tile[] rows1 : board.getGrid()) {
+            for (Tile tile : rows1) {
                 StackPane newTile = createClosedTile(tile);
                 grid.getChildren().add(newTile);
             }
@@ -123,25 +125,26 @@ public class View {
     }
 
     public void update() {
-        flagsLeft.setText("Flags: " + field.getFlagsLeft());
+        flagsLeft.setText("Flags: " + board.getFlagsLeft());
 
-        if (field.isGameOver()) {
+        if (board.isGameOver()) {
             designations.getChildren().remove(1);
-            Text text = new Text(field.isLost()
+            Text text = new Text(board.isLost()
                     ? "YOU LOSE :("
                     : "YOU WON! :)");
             text.setFont(Font.font(14));
-
             designations.getChildren().add(text);
         }
 
-        grid.getChildren().clear();
-        for (Tile[] rows : field.getGrid()) {
+        for (Tile[] rows : board.getGrid()) {
             for (Tile tile : rows) {
-                StackPane newTile = tile.isOpened()
-                        ? createOpenedTile(tile)
-                        : createClosedTile(tile);
-                grid.getChildren().add(newTile);
+                if (grid.getChildren().stream().filter(t -> t.equals(tile)).count() == 1) continue;
+                else {
+                    StackPane newTile = tile.isOpened()
+                            ? createOpenedTile(tile)
+                            : createClosedTile(tile);
+                    grid.getChildren().add(newTile);
+                }
             }
         }
     }
@@ -155,7 +158,7 @@ public class View {
         cover.setStroke(Color.WHITE);
 
         Text flag = new Text("F");
-        flag.setFill(field.isLost()
+        flag.setFill(board.isLost()
                 ? tile.hasBomb()
                 ? Color.GREEN
                 : Color.RED
@@ -163,9 +166,13 @@ public class View {
         flag.setFont(Font.font(16));
         if (!tile.isFlagged())
             flag.setVisible(false);
+        if (board.winCheck() && tile.hasBomb() && !tile.isFlagged()) {
+            flag.setVisible(true);
+            flag.setFill(Color.RED);
+        }
 
         node.getChildren().addAll(cover, flag);
-        if (field.isLost() && tile.hasBomb() && !tile.isFlagged()) {
+        if (board.isLost() && tile.hasBomb() && !tile.isFlagged()) {
             Image bomb = new Image(String.valueOf(getClass().getResource("/bee1.png")));
             ImageView iv = new ImageView();
             iv.setImage(bomb);
@@ -218,14 +225,14 @@ public class View {
     }
 
     private static class Hexagon extends Polygon {
-        Hexagon(double r, double n) {
+        Hexagon(double r, double h) {
             getPoints().addAll(
                     0.0, r,
-                    n, r * 0.5,
-                    n, -r * 0.5,
+                    h, r * 0.5,
+                    h, -r * 0.5,
                     0.0, -r,
-                    -n, -r * 0.5,
-                    -n, r * 0.5
+                    -h, -r * 0.5,
+                    -h, r * 0.5
             );
         }
     }
