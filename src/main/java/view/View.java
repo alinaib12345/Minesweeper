@@ -14,12 +14,14 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import controller.Controller;
+import javafx.stage.Stage;
 import model.Board;
 import model.Tile;
 
 import java.io.IOException;
 
 public class View {
+    private final Stage primaryStage;
     private Board board;
     private Controller controller;
     private AnchorPane root;
@@ -38,6 +40,10 @@ public class View {
     private boolean isConfigured;
 
     private int rows, tiles, bombs;
+
+    public View(Stage mainStage) {
+        this.primaryStage = mainStage;
+    }
 
     public AnchorPane getRoot() {return root;}
 
@@ -58,7 +64,7 @@ public class View {
         root = new AnchorPane();
 
         board = new Board(rows, tiles, bombs);
-        controller = new Controller(board, this);
+        controller = new Controller(board, this, primaryStage);
 
         double windowHeight = 2.0 * yOffset + board.getRows() / 2.0 * (tileHeight + r);
         double windowWidth = 2.5 * xOffset + board.getColumns() * tileWidth;
@@ -138,7 +144,7 @@ public class View {
 
         for (Tile[] rows : board.getGrid()) {
             for (Tile tile : rows) {
-                if (grid.getChildren().stream().filter(t -> t.equals(tile)).count() == 1) continue;
+                if (!tile.isOpened() && !tile.isFlagged() && !board.isLost()) continue;
                 else {
                     StackPane newTile = tile.isOpened()
                             ? createOpenedTile(tile)
@@ -147,6 +153,15 @@ public class View {
                 }
             }
         }
+    }
+
+    public ImageView setImage(){
+        Image bomb = new Image(String.valueOf(getClass().getResource("/bee1.png")));
+        ImageView iv = new ImageView();
+        iv.setImage(bomb);
+        iv.setFitHeight(25);
+        iv.setFitWidth(20);
+        return iv;
     }
 
     public StackPane createClosedTile(Tile tile) {
@@ -172,14 +187,8 @@ public class View {
         }
 
         node.getChildren().addAll(cover, flag);
-        if (board.isLost() && tile.hasBomb() && !tile.isFlagged()) {
-            Image bomb = new Image(String.valueOf(getClass().getResource("/bee1.png")));
-            ImageView iv = new ImageView();
-            iv.setImage(bomb);
-            iv.setFitHeight(25);
-            iv.setFitWidth(20);
-            node.getChildren().add(iv);
-        }
+        if (board.isLost() && tile.hasBomb() && !tile.isFlagged())
+            node.getChildren().add(setImage());
 
         node.setTranslateY(tile.getY() * tileHeight * 0.75 + yOffset);
         node.setTranslateX(tile.getX() * tileWidth + (tile.getY() % 2) * h + xOffset);
@@ -210,14 +219,9 @@ public class View {
         bombs.setFont(Font.font(16));
 
         node.getChildren().addAll(hex, bombs);
-        if (tile.hasBomb()){
-            Image bomb = new Image(String.valueOf(getClass().getResource("/bee1.png")));
-            ImageView iv = new ImageView();
-            iv.setImage(bomb);
-            iv.setFitHeight(25);
-            iv.setFitWidth(20);
-            node.getChildren().add(iv);
-        }
+        if (tile.hasBomb())
+            node.getChildren().add(setImage());
+
         node.setTranslateY(tile.getY() * tileHeight * 0.75 + yOffset);
         node.setTranslateX(tile.getX() * tileWidth + (tile.getY() % 2) * h + xOffset);
 

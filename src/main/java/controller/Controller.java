@@ -6,7 +6,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
-import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import model.Board;
 import model.Tile;
@@ -17,6 +16,9 @@ import java.io.IOException;
 public class Controller {
     private Board board;
     private View view;
+    private Stage primaryStage;
+    private int maxX = 40;
+    private int maxY = 25;
     @FXML
     TextField columns;
     @FXML
@@ -26,24 +28,27 @@ public class Controller {
     @FXML
     Label wrong;
 
-    public Controller(Board board, View view) {
+    public Controller(Board board, View view, Stage mainStage) {
         this.board = board;
         this.view = view;
+        this.primaryStage = mainStage;
     }
 
-    public Controller(View view) {
-        this.view = view;
+    public Controller(View view, Stage mainStage) {
+            this.view = view;
+            this.primaryStage = mainStage;
     }
 
+    @FXML
     public void playNewGame() {
-        int x;;
+        int x;
         int y;
         int bombs;
             try {
                 x = Integer.parseInt(columns.getText());
                 y = Integer.parseInt(rows.getText());
                 bombs = Integer.parseInt(this.bombs.getText());
-                if (x <= 0 || y <= 0 || bombs <= 0 || x * y <= bombs || x > 40 || y > 25
+                if (x <= 0 || y <= 0 || bombs <= 0 || x * y <= bombs || x > maxX || y > maxY
                 ) {
                     wrong.setVisible(true);
                     return;
@@ -57,7 +62,7 @@ public class Controller {
         if (!view.isConfigured())
             return;
 
-        Minesweeper.mainStage.setScene(new Scene(view.createGameBoard()));
+        primaryStage.setScene(new Scene(view.createGameBoard()));
     }
 
     public void returnToMenu() throws IOException {
@@ -65,11 +70,11 @@ public class Controller {
         loader.setController(this);
 
         Parent root = loader.load();
-        Minesweeper.mainStage.setScene(new Scene(root));
+        primaryStage.setScene(new Scene(root));
     }
 
     public void reset() {
-        Minesweeper.mainStage.getScene().setRoot(view.createGameBoard());
+        primaryStage.setScene(new Scene(view.createGameBoard()));
     }
 
     public void exit() {
