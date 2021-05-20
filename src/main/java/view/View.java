@@ -142,15 +142,13 @@ public class View {
             designations.getChildren().add(text);
         }
 
+        grid.getChildren().clear();
         for (Tile[] rows : board.getGrid()) {
             for (Tile tile : rows) {
-                if (!tile.isOpened() && !tile.isFlagged() && !board.isLost()) continue;
-                else {
-                    StackPane newTile = tile.isOpened()
-                            ? createOpenedTile(tile)
-                            : createClosedTile(tile);
-                    grid.getChildren().add(newTile);
-                }
+                StackPane newTile = tile.isOpened()
+                        ? createOpenedTile(tile)
+                        : createClosedTile(tile);
+                grid.getChildren().add(newTile);
             }
         }
     }
